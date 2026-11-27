@@ -7,7 +7,6 @@ import {
   AchievementsGroup,
   CertificationsGroup,
   ContactRelayGroup,
-  EducationGroup,
   ExperienceGroup,
   HeroCoreGroup,
   ProjectsGroup,
@@ -67,6 +66,7 @@ export function UniverseScene({
 
   const isHeroActive = visualState.activeSection === 'identity';
   const isAboutActive = visualState.activeSection === 'about';
+  const isEducationActive = visualState.activeSection === 'education';
   const sparkleCount = isHeroActive
     ? isLowPower
       ? 5
@@ -85,10 +85,6 @@ export function UniverseScene({
       {/* Section-Specific 3D Environments inside One Shared Canvas */}
       <HeroCoreGroup
         active={visualState.activeSection === 'identity'}
-        reducedMotion={reducedMotion}
-      />
-      <EducationGroup
-        active={visualState.activeSection === 'education'}
         reducedMotion={reducedMotion}
       />
       <ExperienceGroup
@@ -131,8 +127,8 @@ export function UniverseScene({
         reducedMotion={reducedMotion}
       />
 
-      {/* Restrained crisp pinpoint stars (omitted on About/Profile for clean portrait clarity) */}
-      {!isAboutActive ? (
+      {/* Restrained crisp pinpoint stars (omitted on About/Profile and Education for clean clarity) */}
+      {!isAboutActive && !isEducationActive ? (
         <Sparkles
           count={sparkleCount}
           scale={[12, 7, 5]}

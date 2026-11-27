@@ -1,114 +1,134 @@
-import { motion } from 'framer-motion';
-import { GraduationCap } from 'lucide-react';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { TechBadge } from '@/components/ui/TechBadge';
-import { useReducedMotionPref } from '@/hooks/useReducedMotionPref';
 import type { EducationItem } from '@/types/portfolio';
 
 interface EducationSectionProps {
   education: EducationItem[];
 }
 
-export function EducationSection({ education }: EducationSectionProps) {
-  const reducedMotion = useReducedMotionPref();
+interface AcademicMeta {
+  category: string;
+  subtitle: string;
+}
 
+function getAcademicMeta(item: EducationItem, index: number): AcademicMeta {
+  const haystack = `${item.id} ${item.degree} ${item.institution}`.toLowerCase();
+  const isSchooling =
+    haystack.includes('school') ||
+    haystack.includes('higher secondary') ||
+    haystack.includes('10th') ||
+    haystack.includes('12th') ||
+    index > 0;
+
+  if (isSchooling) {
+    return {
+      category: 'SCHOOLING',
+      subtitle: 'Higher Secondary',
+    };
+  }
+
+  return {
+    category: 'COLLEGE',
+    subtitle: 'Undergraduate',
+  };
+}
+
+export function EducationSection({ education }: EducationSectionProps) {
   return (
     <section
       id="education"
       aria-labelledby="education-heading"
       className="snap-section relative mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 lg:px-8"
     >
-      <div className="grid items-center gap-10 lg:grid-cols-12">
-        <div className="lg:col-span-8">
-          <div className="mb-8">
-            <p className="font-mono text-xs uppercase tracking-[0.24em] text-blue-400">
-              03 // Education
-            </p>
-            <h2
-              id="education-heading"
-              className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl"
-            >
-              Academic <span className="text-gradient-universe">Foundation</span>
-            </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-              Undergraduate specialization in Artificial Intelligence &amp; Data Science alongside foundational secondary schooling.
-            </p>
+      <div className="mx-auto w-full max-w-5xl">
+        <header className="mb-10">
+          <p className="font-mono text-xs uppercase tracking-[0.24em] text-cyan-400">
+            03 // Education
+          </p>
+          <h2
+            id="education-heading"
+            className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl"
+          >
+            Academic <span className="text-gradient-universe">Foundation</span>
+          </h2>
+        </header>
+
+        {education.length === 0 ? (
+          <div className="rounded-2xl border border-slate-800/80 bg-slate-950/60 py-10 text-center backdrop-blur-md">
+            <p className="text-sm text-slate-400">No education entries published yet.</p>
           </div>
+        ) : (
+          <div className="divide-y divide-slate-800/80">
+            {education.map((edu, index) => {
+              const meta = getAcademicMeta(edu, index);
+              const period = edu.startDate ? `${edu.startDate} – ${edu.endDate}` : edu.endDate;
+              const qualification = edu.fieldOfStudy
+                ? `${edu.degree} – ${edu.fieldOfStudy}`
+                : edu.degree;
+              const performanceParts = edu.gradeOrGpa
+                ? edu.gradeOrGpa
+                    .split('|')
+                    .map((part) => part.trim())
+                    .filter(Boolean)
+                : [];
+              const formattedStatus = edu.statusLabel
+                ? edu.statusLabel.toLowerCase().startsWith('graduation status')
+                  ? edu.statusLabel
+                  : `Graduation status: ${edu.statusLabel}`
+                : null;
 
-          {education.length === 0 ? (
-            <GlassCard className="py-10 text-center">
-              <p className="text-sm text-slate-400">No education entries published yet.</p>
-            </GlassCard>
-          ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            {education.map((edu, index) => (
-              <motion.article
-                key={edu.id}
-                initial={reducedMotion ? undefined : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.45, delay: index * 0.08 }}
-              >
-                <GlassCard glowAccent={index === 0 ? 'cyan' : 'blue'} className="flex h-full flex-col justify-between p-6">
-                  <div>
-                    <div className="flex items-start justify-between gap-2">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-400/35 bg-cyan-500/10 text-cyan-300">
-                        {edu.logoUrl ? (
-                          <img
-                            src={edu.logoUrl}
-                            alt=""
-                            aria-hidden="true"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                            className="h-7 w-7 object-contain"
-                          />
-                        ) : (
-                          <GraduationCap className="h-5 w-5" aria-hidden="true" />
-                        )}
-                      </span>
-                      <TechBadge
-                        label={edu.startDate ? `${edu.startDate} – ${edu.endDate}` : edu.endDate}
-                        tone={index === 0 ? 'cyan' : 'blue'}
-                      />
-                    </div>
+              return (
+                <article
+                  key={edu.id}
+                  className="grid gap-5 py-8 first:pt-0 last:pb-0 md:grid-cols-12 md:items-start md:gap-8"
+                >
+                  {/* LEFT SIDE – Academic Category */}
+                  <div className="border-l-2 border-cyan-400/50 pl-4 md:col-span-4 md:py-1">
+                    <p className="font-mono text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                      {meta.category}
+                    </p>
+                    <p className="mt-2 font-mono text-lg font-semibold tracking-tight text-white sm:text-xl">
+                      {period}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-400">{meta.subtitle}</p>
+                  </div>
 
-                    <h3 className="mt-4 text-lg font-bold text-white">
+                  {/* RIGHT SIDE – Information Panel */}
+                  <div className="rounded-2xl border border-cyan-400/18 bg-slate-950/60 p-6 backdrop-blur-md transition-colors hover:border-cyan-400/35 sm:p-7 md:col-span-8">
+                    <h3 className="text-lg font-bold tracking-tight text-white sm:text-xl">
                       {edu.institution}
                     </h3>
-                    <p className="mt-1.5 text-sm text-blue-200">
-                      {edu.degree}
-                      {edu.fieldOfStudy ? ` • ${edu.fieldOfStudy}` : ''}
+                    <p className="mt-1.5 text-sm font-medium text-blue-200 sm:text-base">
+                      {qualification}
                     </p>
 
-                    {edu.highlights.length > 0 ? (
-                      <ul className="mt-4 space-y-2 text-xs leading-relaxed text-slate-300">
-                        {edu.highlights.map((item) => (
-                          <li key={item} className="flex items-start gap-2">
-                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-400" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : null}
-                  </div>
-
-                  <div className="mt-5 border-t border-slate-800/80 pt-3">
-                    {edu.gradeOrGpa ? (
-                      <p className="font-mono text-xs text-purple-300">{edu.gradeOrGpa}</p>
-                    ) : null}
-                    {edu.statusLabel ? (
-                      <p className="mt-1 font-mono text-[11px] text-cyan-300">
-                        {edu.statusLabel}
+                    {edu.description ? (
+                      <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                        {edu.description}
                       </p>
                     ) : null}
+
+                    {performanceParts.length > 0 || formattedStatus ? (
+                      <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-slate-800/80 pt-4 font-mono text-xs">
+                        {performanceParts.length > 0 ? (
+                          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-cyan-300">
+                            {performanceParts.map((part) => (
+                              <span key={part} className="font-medium">
+                                {part}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        {formattedStatus ? (
+                          <p className="text-slate-300">{formattedStatus}</p>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
-                </GlassCard>
-              </motion.article>
-            ))}
+                </article>
+              );
+            })}
           </div>
-          )}
-        </div>
+        )}
       </div>
     </section>
   );

@@ -77,54 +77,6 @@ export function HeroCoreGroup({
   );
 }
 
-export function EducationGroup({
-  active,
-  reducedMotion,
-}: {
-  active: boolean;
-  reducedMotion: boolean;
-}) {
-  const presenceRef = useSectionPresence(active, 2.15, 0.05);
-  const eduRef = useRef<Group>(null);
-
-  useFrame((_state, delta) => {
-    if (!active || reducedMotion || !eduRef.current) return;
-    eduRef.current.rotation.y += delta * 0.24;
-  });
-
-  return (
-    <group ref={presenceRef}>
-      <Float speed={reducedMotion ? 0 : 1.3} floatIntensity={reducedMotion ? 0 : 0.2}>
-        <group ref={eduRef}>
-          {/* Stacked Books */}
-          <mesh position={[0, -0.75, 0]}>
-            <boxGeometry args={[1.55, 0.24, 1.1]} />
-            <meshStandardMaterial color="#1e293b" emissive="#1d4ed8" emissiveIntensity={0.45} metalness={0.6} roughness={0.3} />
-          </mesh>
-          <mesh position={[0.06, -0.48, 0.04]} rotation={[0, 0.12, 0]}>
-            <boxGeometry args={[1.38, 0.22, 0.98]} />
-            <meshStandardMaterial color="#0f172a" emissive="#0891b2" emissiveIntensity={0.5} metalness={0.6} roughness={0.3} />
-          </mesh>
-          {/* Graduation Cap (Mortarboard) */}
-          <mesh position={[0, 0.05, 0]}>
-            <cylinderGeometry args={[0.45, 0.55, 0.34, 24]} />
-            <meshStandardMaterial color="#0f172a" metalness={0.75} roughness={0.25} />
-          </mesh>
-          <mesh position={[0, 0.24, 0]} rotation={[0.08, 0.4, 0]}>
-            <boxGeometry args={[1.45, 0.07, 1.45]} />
-            <meshStandardMaterial color="#1e1b4b" emissive="#3b82f6" emissiveIntensity={0.45} metalness={0.8} roughness={0.2} />
-          </mesh>
-          {/* Gold Tassel */}
-          <mesh position={[0.62, 0.02, 0.52]}>
-            <cylinderGeometry args={[0.03, 0.06, 0.45, 12]} />
-            <meshStandardMaterial color="#fbbf24" emissive="#b45309" emissiveIntensity={0.5} metalness={0.88} roughness={0.2} />
-          </mesh>
-        </group>
-      </Float>
-    </group>
-  );
-}
-
 export function ExperienceGroup({
   active,
   company,
