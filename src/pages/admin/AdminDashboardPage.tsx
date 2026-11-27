@@ -89,16 +89,46 @@ export default function AdminDashboardPage() {
   const [portfolio, setPortfolio] = useState<PortfolioData | null>(null);
   const [enquiries, setEnquiries] = useState<EnquiryItem[]>([]);
   const [mediaAssets, setMediaAssets] = useState<MediaAsset[]>([]);
+  const [loadWarning, setLoadWarning] = useState<string | null>(null);
 
   const loadAll = useCallback(async () => {
-    const [nextPortfolio, nextEnquiries, nextMedia] = await Promise.all([
+    const [portfolioRes, enquiriesRes, mediaRes] = await Promise.allSettled([
       portfolioRepository.getAdminPortfolio(),
       portfolioRepository.getEnquiries(),
       portfolioRepository.getMediaAssets(),
     ]);
-    setPortfolio(nextPortfolio);
-    setEnquiries(nextEnquiries);
-    setMediaAssets(nextMedia);
+
+    const warnings: string[] = [];
+
+    if (portfolioRes.status === 'fulfilled') {
+      setPortfolio(portfolioRes.value);
+    } else {
+      warnings.push('Portfolio data failed to load cleanly.');
+    }
+
+    if (enquiriesRes.status === 'fulfilled') {
+      setEnquiries(enquiriesRes.value);
+    } else {
+      const msg =
+        enquiriesRes.reason instanceof Error
+          ? enquiriesRes.reason.message
+          : 'Unable to load enquiries';
+      warnings.push(`Enquiries: ${msg}`);
+      setEnquiries([]);
+    }
+
+    if (mediaRes.status === 'fulfilled') {
+      setMediaAssets(mediaRes.value);
+    } else {
+      const msg =
+        mediaRes.reason instanceof Error
+          ? mediaRes.reason.message
+          : 'Unable to load media library';
+      warnings.push(`Media: ${msg}`);
+      setMediaAssets([]);
+    }
+
+    setLoadWarning(warnings.length > 0 ? warnings.join(' | ') : null);
   }, []);
 
   useEffect(() => {
@@ -172,6 +202,20 @@ export default function AdminDashboardPage() {
 
       {/* Active Workspace */}
       <section className="min-w-0 lg:col-span-9">
+        {loadWarning ? (
+          <div
+            role="alert"
+            className="mb-4 rounded-xl border border-amber-500/35 bg-amber-950/40 px-4 py-3 text-xs text-amber-200"
+          >
+            <p className="font-semibold text-amber-100">
+              Partial Supabase Sync Warning
+            </p>
+            <p className="mt-1 text-amber-200/90">{loadWarning}</p>
+            <p className="mt-1 font-mono text-[11px] text-amber-300/80">
+              Make sure 001_portfolio_cms_schema.sql has been run and app_metadata.role = &quot;admin&quot; is set on your Supabase user.
+            </p>
+          </div>
+        ) : null}
         {activeTab === 'overview' ? (
           <OverviewPanel
             data={portfolio}

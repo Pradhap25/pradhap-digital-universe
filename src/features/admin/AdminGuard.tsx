@@ -15,13 +15,24 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   useEffect(() => {
     let active = true;
-    portfolioRepository.getAdminSession().then((info) => {
-      if (active) setSession(info);
-    });
+    portfolioRepository
+      .getAdminSession()
+      .then((info) => {
+        if (active) setSession(info);
+      })
+      .catch(() => {
+        if (active) {
+          setSession({
+            authenticated: false,
+            email: null,
+            mode: configured ? 'supabase' : 'local-cms',
+          });
+        }
+      });
     return () => {
       active = false;
     };
-  }, [location.pathname]);
+  }, [configured, location.pathname]);
 
   const isLoginRoute = location.pathname === '/admin/login';
 
