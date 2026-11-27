@@ -23,7 +23,8 @@ export function HeroSection({ profile }: HeroSectionProps) {
   const githubHref = profile.githubUrl?.trim() || 'https://github.com/Pradhap25';
   const leetcodeHref =
     profile.leetcodeUrl?.trim() || 'https://leetcode.com/u/M_Lalpradhap/';
-  const linkedinHref = profile.linkedinUrl?.trim() || '';
+  const linkedinHref =
+    profile.linkedinUrl?.trim() || 'https://www.linkedin.com/in/m-lal-pradhap-544432255/';
 
   return (
     <section
@@ -93,9 +94,9 @@ export function HeroSection({ profile }: HeroSectionProps) {
             </a>
 
             <a
-              href={linkedinHref || '#contact'}
-              target={linkedinHref ? '_blank' : undefined}
-              rel={linkedinHref ? 'noreferrer' : undefined}
+              href={linkedinHref}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-blue-400/50 hover:text-blue-200"
             >
               <Linkedin className="h-4 w-4" aria-hidden="true" />

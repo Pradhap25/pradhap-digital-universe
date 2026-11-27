@@ -142,7 +142,7 @@ export const portfolioSeedData: PortfolioData = {
     contactPhone: '',
     githubUrl: 'https://github.com/Pradhap25',
     leetcodeUrl: 'https://leetcode.com/u/M_Lalpradhap/',
-    linkedinUrl: '',
+    linkedinUrl: 'https://www.linkedin.com/in/m-lal-pradhap-544432255/',
     otherSocialLinks: [],
   },
 
