@@ -287,6 +287,7 @@ alter table public.enquiries enable row level security;
 alter table public.media_assets enable row level security;
 
 -- Public read policies (published items only)
+drop policy if exists "Public read site_profile" on public.site_profile;
 create policy "Public read site_profile" on public.site_profile
   for select to anon, authenticated using (true);
 
@@ -300,7 +301,15 @@ begin
   ]
   loop
     execute format(
+      'drop policy if exists "Public read published %1$s" on public.%1$I',
+      tbl
+    );
+    execute format(
       'create policy "Public read published %1$s" on public.%1$I for select to anon, authenticated using (is_published = true or public.is_portfolio_admin())',
+      tbl
+    );
+    execute format(
+      'drop policy if exists "Admin write %1$s" on public.%1$I',
       tbl
     );
     execute format(
@@ -310,20 +319,25 @@ begin
   end loop;
 end $$;
 
+drop policy if exists "Admin write site_profile" on public.site_profile;
 create policy "Admin write site_profile" on public.site_profile
   for all to authenticated using (public.is_portfolio_admin()) with check (public.is_portfolio_admin());
 
 -- Enquiries: public insert only; admin read/update/delete only
+drop policy if exists "Public submit enquiry" on public.enquiries;
 create policy "Public submit enquiry" on public.enquiries
   for insert to anon, authenticated with check (true);
 
+drop policy if exists "Admin manage enquiries" on public.enquiries;
 create policy "Admin manage enquiries" on public.enquiries
   for all to authenticated using (public.is_portfolio_admin()) with check (public.is_portfolio_admin());
 
 -- Media Assets: public read, admin write
+drop policy if exists "Public read media_assets" on public.media_assets;
 create policy "Public read media_assets" on public.media_assets
   for select to anon, authenticated using (true);
 
+drop policy if exists "Admin write media_assets" on public.media_assets;
 create policy "Admin write media_assets" on public.media_assets
   for all to authenticated using (public.is_portfolio_admin()) with check (public.is_portfolio_admin());
 
@@ -332,14 +346,21 @@ insert into storage.buckets (id, name, public)
 values ('portfolio-assets', 'portfolio-assets', true)
 on conflict (id) do nothing;
 
+drop policy if exists "Public view portfolio-assets" on storage.objects;
 create policy "Public view portfolio-assets" on storage.objects
   for select to anon, authenticated using (bucket_id = 'portfolio-assets');
 
+drop policy if exists "Admin upload portfolio-assets" on storage.objects;
 create policy "Admin upload portfolio-assets" on storage.objects
   for insert to authenticated with check (bucket_id = 'portfolio-assets' and public.is_portfolio_admin());
 
+drop policy if exists "Admin update portfolio-assets" on storage.objects;
 create policy "Admin update portfolio-assets" on storage.objects
   for update to authenticated using (bucket_id = 'portfolio-assets' and public.is_portfolio_admin());
 
+drop policy if exists "Admin delete portfolio-assets" on storage.objects;
 create policy "Admin delete portfolio-assets" on storage.objects
   for delete to authenticated using (bucket_id = 'portfolio-assets' and public.is_portfolio_admin());
+
+-- Reload PostgREST schema cache immediately
+notify pgrst, 'reload schema';
