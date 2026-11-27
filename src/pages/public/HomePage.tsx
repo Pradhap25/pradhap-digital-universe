@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Footer } from '@/components/layout/Footer';
 import { PageShell } from '@/components/layout/PageShell';
 import { UniverseNav } from '@/components/layout/UniverseNav';
+import { VisitorCounter } from '@/components/ui/VisitorCounter';
 import { AboutIdentitySection } from '@/features/public/AboutIdentitySection';
 import { AreaOfInterestsSection } from '@/features/public/AreaOfInterestsSection';
 import { CertificationsSection } from '@/features/public/CertificationsSection';
@@ -82,22 +83,24 @@ export function HomePage() {
   );
 
   return (
-    <PageShell
-      backdrop={
-        <UniverseBackdrop
-          scrollYProgress={scrollYProgress}
-          visualState={visualState}
-          activeSkillLogoUrl={activeSkillLogoUrl}
-        />
-      }
-      header={
-        <UniverseNav
-          activeSection={activeSection}
-          brandTitle={data.profile.brandTitle}
-          scrollYProgress={scrollYProgress}
-        />
-      }
-    >
+    <>
+      <VisitorCounter />
+      <PageShell
+        backdrop={
+          <UniverseBackdrop
+            scrollYProgress={scrollYProgress}
+            visualState={visualState}
+            activeSkillLogoUrl={activeSkillLogoUrl}
+          />
+        }
+        header={
+          <UniverseNav
+            activeSection={activeSection}
+            brandTitle={data.profile.brandTitle}
+            scrollYProgress={scrollYProgress}
+          />
+        }
+      >
       <HeroSection profile={data.profile} />
       {isLoading ? (
         <div
@@ -144,6 +147,7 @@ export function HomePage() {
         profile={data.profile}
         footer={<Footer profile={data.profile} />}
       />
-    </PageShell>
+      </PageShell>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 /**
- * Placeholder Supabase Database type map for Phase 1.
- * Will be replaced with generated Supabase Postgres types in Phase 4.
+ * Supabase Database type definitions.
+ * Includes explicit types for site_stats and atomic increment RPC alongside dynamic CMS tables.
  */
 export type Json =
   | string
@@ -22,7 +22,15 @@ export interface Database {
       }
     >;
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      increment_site_visits: {
+        Args: Record<string, never>;
+        Returns: {
+          total_visits: number;
+          updated_at: string;
+        }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
