@@ -116,7 +116,7 @@ export const portfolioSeedData: PortfolioData = {
   profile: {
     fullName: 'M Lalpradhap',
     brandTitle: 'Pradhap Digital Universe',
-    heroHeadline: "Engineering Intelligence. Building What's Next.",
+    heroHeadline: "Lalpradhap's Portfolio",
     roleTitle: 'AI & Data Science Engineer • ML, Computer Vision & Cloud Analytics',
     tagline:
       'B.Tech AI & Data Science graduate building enterprise ML pipelines, YOLOv11 computer vision systems, RAG architectures, and Azure data automation.',

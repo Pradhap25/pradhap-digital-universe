@@ -66,15 +66,6 @@ export function HeroSection({ profile }: HeroSectionProps) {
             <span className="text-gradient-universe block">{profile.heroHeadline}</span>
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-6 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg"
-          >
-            {profile.tagline}
-          </motion.p>
-
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
