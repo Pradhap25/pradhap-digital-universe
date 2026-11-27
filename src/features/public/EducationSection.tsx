@@ -69,11 +69,6 @@ export function EducationSection({ education }: EducationSectionProps) {
                     .map((part) => part.trim())
                     .filter(Boolean)
                 : [];
-              const formattedStatus = edu.statusLabel
-                ? edu.statusLabel.toLowerCase().startsWith('graduation status')
-                  ? edu.statusLabel
-                  : `Graduation status: ${edu.statusLabel}`
-                : null;
 
               return (
                 <article
@@ -106,21 +101,13 @@ export function EducationSection({ education }: EducationSectionProps) {
                       </p>
                     ) : null}
 
-                    {performanceParts.length > 0 || formattedStatus ? (
-                      <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-slate-800/80 pt-4 font-mono text-xs">
-                        {performanceParts.length > 0 ? (
-                          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-cyan-300">
-                            {performanceParts.map((part) => (
-                              <span key={part} className="font-medium">
-                                {part}
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
-
-                        {formattedStatus ? (
-                          <p className="text-slate-300">{formattedStatus}</p>
-                        ) : null}
+                    {performanceParts.length > 0 ? (
+                      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-800/80 pt-4 font-mono text-xs text-cyan-300">
+                        {performanceParts.map((part) => (
+                          <span key={part} className="font-medium">
+                            {part}
+                          </span>
+                        ))}
                       </div>
                     ) : null}
                   </div>

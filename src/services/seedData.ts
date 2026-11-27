@@ -155,7 +155,6 @@ export const portfolioSeedData: PortfolioData = {
       startDate: '2022',
       endDate: '2026',
       gradeOrGpa: 'CGPA: 7.73',
-      statusLabel: 'Completed (Degree certificate pending).',
       description: 'Undergraduate degree in Artificial Intelligence and Data Science, completed.',
       highlights: [],
       sortOrder: 1,
