@@ -1,5 +1,5 @@
 import { Float } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useRef } from 'react';
 import { MathUtils, type Group, type Mesh } from 'three';
 import azureLogo from '@/assets/brands/azure.svg';
@@ -43,56 +43,35 @@ export function HeroCoreGroup({
   active: boolean;
   reducedMotion: boolean;
 }) {
-  const presenceRef = useSectionPresence(active, 2.05, 0.05);
+  const viewportWidth = useThree((state) => state.viewport.width);
+  const isCompact = viewportWidth < 5.5;
+  const presenceRef = useSectionPresence(active, isCompact ? 0.95 : 2.15, 0.08);
   const coreRef = useRef<Mesh>(null);
-  const ringsRef = useRef<Group>(null);
 
   useFrame((_state, delta) => {
-    if (!active || reducedMotion) return;
-    if (coreRef.current) {
-      coreRef.current.rotation.y += delta * 0.32;
-      coreRef.current.rotation.x += delta * 0.12;
-    }
-    if (ringsRef.current) {
-      ringsRef.current.rotation.z -= delta * 0.2;
-      ringsRef.current.rotation.y += delta * 0.14;
-    }
+    if (!active || reducedMotion || !coreRef.current) return;
+    coreRef.current.rotation.y += delta * 0.14;
+    coreRef.current.rotation.x += delta * 0.05;
   });
 
   return (
     <group ref={presenceRef}>
-      <Float speed={reducedMotion ? 0 : 1.4} floatIntensity={reducedMotion ? 0 : 0.25}>
-        <mesh ref={coreRef}>
-          <icosahedronGeometry args={[1.0, 1]} />
+      <Float
+        speed={reducedMotion ? 0 : 0.85}
+        rotationIntensity={0}
+        floatIntensity={reducedMotion ? 0 : 0.16}
+      >
+        <mesh ref={coreRef} scale={isCompact ? 0.78 : 1}>
+          <icosahedronGeometry args={[1.05, 0]} />
           <meshStandardMaterial
-            color="#0b132b"
-            emissive="#2563eb"
-            emissiveIntensity={0.5}
-            metalness={0.85}
-            roughness={0.2}
-            wireframe
+            color="#0b152d"
+            emissive="#1d4ed8"
+            emissiveIntensity={0.28}
+            metalness={0.82}
+            roughness={0.22}
+            flatShading
           />
         </mesh>
-        <mesh scale={0.54}>
-          <octahedronGeometry args={[1, 0]} />
-          <meshStandardMaterial
-            color="#22d3ee"
-            emissive="#0891b2"
-            emissiveIntensity={0.75}
-            metalness={0.7}
-            roughness={0.18}
-          />
-        </mesh>
-        <group ref={ringsRef}>
-          <mesh rotation={[Math.PI / 2.5, 0.25, 0]}>
-            <torusGeometry args={[1.65, 0.016, 16, 84]} />
-            <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={0.65} />
-          </mesh>
-          <mesh rotation={[-Math.PI / 3.2, -0.35, 0.4]}>
-            <torusGeometry args={[1.95, 0.012, 16, 84]} />
-            <meshStandardMaterial color="#a855f7" emissive="#a855f7" emissiveIntensity={0.65} />
-          </mesh>
-        </group>
       </Float>
     </group>
   );

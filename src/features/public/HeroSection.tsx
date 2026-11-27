@@ -1,8 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowDown, ArrowRight, Code2, FileDown, Github, Sparkles } from 'lucide-react';
+import { ArrowDown, Code2, Github, Linkedin } from 'lucide-react';
 import { useRef } from 'react';
-import { NeonLinkButton } from '@/components/ui/NeonButton';
-import { TechBadge } from '@/components/ui/TechBadge';
 import { useReducedMotionPref } from '@/hooks/useReducedMotionPref';
 import type { SiteProfile } from '@/types/portfolio';
 
@@ -21,6 +19,11 @@ export function HeroSection({ profile }: HeroSectionProps) {
 
   const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '22%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.15]);
+
+  const githubHref = profile.githubUrl?.trim() || 'https://github.com/Pradhap25';
+  const leetcodeHref =
+    profile.leetcodeUrl?.trim() || 'https://leetcode.com/u/M_Lalpradhap/';
+  const linkedinHref = profile.linkedinUrl?.trim() || '';
 
   return (
     <section
@@ -76,61 +79,37 @@ export function HeroSection({ profile }: HeroSectionProps) {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.28 }}
-            className="mt-9 flex flex-wrap items-center gap-4"
+            className="mt-9 flex flex-wrap items-center gap-3 sm:gap-4"
           >
-            <NeonLinkButton href={profile.primaryCtaHref || '#projects'} variant="primary">
-              <span>{profile.primaryCtaLabel || 'Enter Innovation World'}</span>
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </NeonLinkButton>
-            <NeonLinkButton href={profile.secondaryCtaHref || '#about'} variant="secondary">
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              <span>{profile.secondaryCtaLabel || 'Explore Identity'}</span>
-            </NeonLinkButton>
-            {profile.resumeUrl ? (
-              <NeonLinkButton
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noreferrer"
-                variant="secondary"
-              >
-                <FileDown className="h-4 w-4" aria-hidden="true" />
-                <span>Resume</span>
-              </NeonLinkButton>
-            ) : null}
-            {profile.githubUrl ? (
-              <a
-                href={profile.githubUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-cyan-400/50 hover:text-cyan-200"
-              >
-                <Github className="h-4 w-4" aria-hidden="true" />
-                <span>GitHub</span>
-              </a>
-            ) : null}
-            {profile.leetcodeUrl ? (
-              <a
-                href={profile.leetcodeUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-purple-400/50 hover:text-purple-200"
-              >
-                <Code2 className="h-4 w-4" aria-hidden="true" />
-                <span>LeetCode</span>
-              </a>
-            ) : null}
-          </motion.div>
+            <a
+              href={githubHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-cyan-400/50 hover:text-cyan-200"
+            >
+              <Github className="h-4 w-4" aria-hidden="true" />
+              <span>GitHub</span>
+            </a>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.36 }}
-            className="mt-10 flex flex-wrap gap-2"
-          >
-            <TechBadge label="Python & AI/ML" tone="cyan" />
-            <TechBadge label="LLMs • RAG • MCP" tone="purple" />
-            <TechBadge label="YOLOv11 & Computer Vision" tone="blue" />
-            <TechBadge label="Azure Synapse & Power Platform" tone="slate" />
+            <a
+              href={leetcodeHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-purple-400/50 hover:text-purple-200"
+            >
+              <Code2 className="h-4 w-4" aria-hidden="true" />
+              <span>LeetCode</span>
+            </a>
+
+            <a
+              href={linkedinHref || '#contact'}
+              target={linkedinHref ? '_blank' : undefined}
+              rel={linkedinHref ? 'noreferrer' : undefined}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-2.5 text-sm text-slate-200 transition-colors hover:border-blue-400/50 hover:text-blue-200"
+            >
+              <Linkedin className="h-4 w-4" aria-hidden="true" />
+              <span>LinkedIn</span>
+            </a>
           </motion.div>
         </div>
 

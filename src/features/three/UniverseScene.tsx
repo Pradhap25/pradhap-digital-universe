@@ -66,7 +66,14 @@ export function UniverseScene({
     }
   });
 
-  const sparkleCount = isLowPower ? 14 : 28;
+  const isHeroActive = visualState.activeSection === 'identity';
+  const sparkleCount = isHeroActive
+    ? isLowPower
+      ? 5
+      : 8
+    : isLowPower
+      ? 14
+      : 28;
 
   return (
     <>
@@ -132,9 +139,9 @@ export function UniverseScene({
       <Sparkles
         count={sparkleCount}
         scale={[12, 7, 5]}
-        size={1.4}
-        speed={reducedMotion ? 0 : 0.16}
-        opacity={0.38}
+        size={isHeroActive ? 1.15 : 1.4}
+        speed={reducedMotion ? 0 : isHeroActive ? 0.08 : 0.16}
+        opacity={isHeroActive ? 0.24 : 0.38}
         color="#67e8f9"
       />
     </>
