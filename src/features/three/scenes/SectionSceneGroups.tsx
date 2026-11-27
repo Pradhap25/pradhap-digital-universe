@@ -77,37 +77,6 @@ export function HeroCoreGroup({
   );
 }
 
-export function AboutHaloGroup({
-  active,
-  reducedMotion,
-}: {
-  active: boolean;
-  reducedMotion: boolean;
-}) {
-  const presenceRef = useSectionPresence(active, -1.9, 0.05);
-  const identityRef = useRef<Group>(null);
-
-  useFrame((_state, delta) => {
-    if (!active || reducedMotion || !identityRef.current) return;
-    identityRef.current.rotation.z += delta * 0.16;
-  });
-
-  return (
-    <group ref={presenceRef}>
-      <group ref={identityRef}>
-        <mesh rotation={[0.2, 0.3, 0]}>
-          <torusGeometry args={[1.75, 0.02, 16, 96]} />
-          <meshStandardMaterial color="#38bdf8" emissive="#0284c7" emissiveIntensity={0.65} />
-        </mesh>
-        <mesh rotation={[-0.35, 0.2, 0.5]}>
-          <torusGeometry args={[2.1, 0.012, 16, 96]} />
-          <meshStandardMaterial color="#818cf8" emissive="#6366f1" emissiveIntensity={0.55} />
-        </mesh>
-      </group>
-    </group>
-  );
-}
-
 export function EducationGroup({
   active,
   reducedMotion,

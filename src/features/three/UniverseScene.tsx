@@ -4,7 +4,6 @@ import { type MutableRefObject, useMemo, useRef } from 'react';
 import { Color, type PointLight } from 'three';
 import type { PortfolioSectionId } from '@/types/portfolio';
 import {
-  AboutHaloGroup,
   AchievementsGroup,
   CertificationsGroup,
   ContactRelayGroup,
@@ -67,6 +66,7 @@ export function UniverseScene({
   });
 
   const isHeroActive = visualState.activeSection === 'identity';
+  const isAboutActive = visualState.activeSection === 'about';
   const sparkleCount = isHeroActive
     ? isLowPower
       ? 5
@@ -85,10 +85,6 @@ export function UniverseScene({
       {/* Section-Specific 3D Environments inside One Shared Canvas */}
       <HeroCoreGroup
         active={visualState.activeSection === 'identity'}
-        reducedMotion={reducedMotion}
-      />
-      <AboutHaloGroup
-        active={visualState.activeSection === 'about'}
         reducedMotion={reducedMotion}
       />
       <EducationGroup
@@ -135,15 +131,17 @@ export function UniverseScene({
         reducedMotion={reducedMotion}
       />
 
-      {/* Restrained crisp pinpoint stars (no excessive particles or fog) */}
-      <Sparkles
-        count={sparkleCount}
-        scale={[12, 7, 5]}
-        size={isHeroActive ? 1.15 : 1.4}
-        speed={reducedMotion ? 0 : isHeroActive ? 0.08 : 0.16}
-        opacity={isHeroActive ? 0.24 : 0.38}
-        color="#67e8f9"
-      />
+      {/* Restrained crisp pinpoint stars (omitted on About/Profile for clean portrait clarity) */}
+      {!isAboutActive ? (
+        <Sparkles
+          count={sparkleCount}
+          scale={[12, 7, 5]}
+          size={isHeroActive ? 1.15 : 1.4}
+          speed={reducedMotion ? 0 : isHeroActive ? 0.08 : 0.16}
+          opacity={isHeroActive ? 0.24 : 0.38}
+          color="#67e8f9"
+        />
+      ) : null}
     </>
   );
 }
