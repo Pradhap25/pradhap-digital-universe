@@ -9,7 +9,6 @@ import powerbiLogo from '@/assets/brands/powerbi.svg';
 import pythonLogo from '@/assets/brands/python.svg';
 import sapLogo from '@/assets/brands/sap.svg';
 import tensorflowLogo from '@/assets/brands/tensorflow.svg';
-import flaskLogo from '@/assets/brands/flask.svg';
 import dockerLogo from '@/assets/brands/docker.svg';
 import type { SkillCategory } from '@/types/portfolio';
 import type { ExperienceCompanyKey } from '../types';
@@ -380,94 +379,6 @@ export function SkillsGroup({
                 />
               </mesh>
             ))}
-          </group>
-        )}
-      </group>
-    </group>
-  );
-}
-
-export function ProjectsGroup({
-  active,
-  projectId,
-  reducedMotion,
-}: {
-  active: boolean;
-  projectId: string;
-  reducedMotion: boolean;
-}) {
-  const presenceRef = useSectionPresence(active, -2.15, 0);
-  const objRef = useRef<Group>(null);
-
-  useFrame((_state, delta) => {
-    if (!active || reducedMotion || !objRef.current) return;
-    objRef.current.rotation.y += delta * 0.22;
-  });
-
-  return (
-    <group ref={presenceRef}>
-      <group ref={objRef}>
-        {projectId === 'proj-traffic-fine' ? (
-          <group>
-            <BrandMonolith
-              logoUrl={opencvLogo}
-              position={[0, 0.95, 0]}
-              width={0.95}
-              height={0.7}
-              frameColor="#22d3ee"
-              plateBackground="rgba(10, 18, 38, 0.85)"
-            />
-            <mesh position={[0, -0.2, 0]}>
-              <boxGeometry args={[1.75, 1.0, 0.95]} />
-              <meshStandardMaterial color="#22d3ee" wireframe />
-            </mesh>
-            <mesh position={[0, -0.25, 0]}>
-              <boxGeometry args={[1.05, 0.5, 0.55]} />
-              <meshStandardMaterial color="#0f172a" emissive="#0284c7" emissiveIntensity={0.65} />
-            </mesh>
-          </group>
-        ) : projectId === 'proj-rag-resume' ? (
-          <group>
-            <BrandMonolith
-              logoUrl={flaskLogo}
-              position={[0, 0.95, 0]}
-              width={0.95}
-              height={0.7}
-              frameColor="#a855f7"
-              plateBackground="rgba(10, 18, 38, 0.85)"
-            />
-            <mesh position={[0, -0.2, 0]}>
-              <icosahedronGeometry args={[0.62, 0]} />
-              <meshStandardMaterial color="#a855f7" emissive="#7e22ce" emissiveIntensity={0.85} />
-            </mesh>
-            {[
-              [1.1, 0.2, 0.25],
-              [-1.0, 0.35, -0.2],
-              [0.75, -0.85, -0.25],
-              [-0.9, -0.75, 0.3],
-            ].map((pos, idx) => (
-              <mesh key={idx} position={pos as [number, number, number]}>
-                <octahedronGeometry args={[0.22, 0]} />
-                <meshStandardMaterial color="#22d3ee" emissive="#0891b2" emissiveIntensity={0.75} />
-              </mesh>
-            ))}
-          </group>
-        ) : (
-          <group rotation={[0.45, 0.2, -0.15]}>
-            <mesh>
-              <boxGeometry args={[2.1, 0.08, 1.4]} />
-              <meshStandardMaterial
-                color="#0f172a"
-                emissive="#10b981"
-                emissiveIntensity={0.45}
-                metalness={0.88}
-                roughness={0.18}
-              />
-            </mesh>
-            <mesh position={[0, 0.06, 0]}>
-              <boxGeometry args={[2.12, 0.04, 1.42]} />
-              <meshStandardMaterial color="#34d399" wireframe />
-            </mesh>
           </group>
         )}
       </group>

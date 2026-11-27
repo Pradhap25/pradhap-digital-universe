@@ -30,9 +30,9 @@ const SECTION_IDS: readonly PortfolioSectionId[] = [
   'about',
   'education',
   'experience',
+  'projects',
   'skills',
   'interests',
-  'projects',
   'achievements',
   'certifications',
   'research',
@@ -117,6 +117,10 @@ export function HomePage() {
         experiences={data.experiences}
         onCompanyInView={setActiveCompany}
       />
+      <ProjectsWorldSection
+        projects={data.projects}
+        onProjectChange={setActiveProjectId}
+      />
       <SkillsUniverseSection
         skills={data.skills}
         onSkillFocusChange={(category, skillId) => {
@@ -128,10 +132,6 @@ export function HomePage() {
         interests={data.interests}
         activeCategory={activeInterestCategory}
         onCategoryChange={setActiveInterestCategory}
-      />
-      <ProjectsWorldSection
-        projects={data.projects}
-        onProjectChange={setActiveProjectId}
       />
       <ExcellenceHallSection
         achievements={data.achievements}

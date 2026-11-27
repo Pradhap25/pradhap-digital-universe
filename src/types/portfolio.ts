@@ -134,6 +134,18 @@ export interface InterestGroup {
   isPublished: boolean;
 }
 
+export interface ProjectCaseStudy {
+  problemStatement?: string;
+  problemImportance?: string;
+  whatIBuilt?: string;
+  featuresAndImplementation?: string[];
+  solutionOverview?: string;
+  workflowAndOutcome?: string;
+  architectureSummary?: string;
+  architectureDiagramUrl?: string;
+  architectureStages?: string[];
+}
+
 export interface ProjectItem {
   id: string;
   title: string;
@@ -148,6 +160,7 @@ export interface ProjectItem {
   techStack: string[];
   architectureFlow: string[];
   highlights: string[];
+  caseStudy?: ProjectCaseStudy;
   liveUrl?: string;
   repoUrl?: string;
   sortOrder: number;
