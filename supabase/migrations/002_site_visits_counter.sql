@@ -1,5 +1,17 @@
 -- Pradhap Digital Universe: Live Website Visit Counter Migration
--- Run in Supabase SQL Editor or via Supabase CLI migrations after 001_portfolio_cms_schema.sql.
+-- Run in Supabase SQL Editor or via Supabase CLI migrations.
+-- Safe to run multiple times without resetting existing visit counts.
+
+-- Ensure updated_at trigger helper exists even if 001_portfolio_cms_schema.sql was not run first
+create or replace function public.set_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = timezone('utc', now());
+  return new;
+end;
+$$;
 
 -- 1. Single-row website visitor statistics table
 create table if not exists public.site_stats (
@@ -8,7 +20,7 @@ create table if not exists public.site_stats (
   updated_at timestamptz not null default timezone('utc', now())
 );
 
--- Seed the single primary stats row idempotently
+-- Seed the single primary stats row idempotently (preserves existing total_visits)
 insert into public.site_stats (id, total_visits)
 values ('primary', 0)
 on conflict (id) do nothing;
@@ -52,3 +64,6 @@ $$;
 
 revoke all on function public.increment_site_visits() from public;
 grant execute on function public.increment_site_visits() to anon, authenticated;
+
+-- Prompt PostgREST to refresh schema cache immediately
+notify pgrst, 'reload schema';

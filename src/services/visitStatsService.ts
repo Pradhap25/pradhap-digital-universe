@@ -13,6 +13,7 @@ export interface VisitRecordResult {
  * component re-renders, or re-mounts never emit duplicate increments.
  */
 let pageLoadVisitPromise: Promise<VisitRecordResult> | null = null;
+let warnedMissingSupabaseInProd = false;
 
 function readLocalVisits(): number {
   try {
@@ -47,26 +48,48 @@ function extractVisitCount(data: unknown): number | null {
 }
 
 async function performVisitIncrement(): Promise<VisitRecordResult> {
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    const nextCount = writeLocalVisits(readLocalVisits() + 1);
-    return { ok: true, totalVisits: nextCount };
-  }
-
   try {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      if (import.meta.env.PROD && !warnedMissingSupabaseInProd) {
+        warnedMissingSupabaseInProd = true;
+        console.warn(
+          '[VisitorCounter] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY is not set in this build; using browser-local count fallback.',
+        );
+      }
+      const nextCount = writeLocalVisits(readLocalVisits() + 1);
+      return { ok: true, totalVisits: nextCount };
+    }
+
     const { data, error } = await supabase.rpc('increment_site_visits');
     if (error) {
-      return { ok: false, totalVisits: null };
+      console.warn(
+        '[VisitorCounter] Supabase RPC increment_site_visits failed:',
+        error.code ?? 'RPC_ERROR',
+        error.message,
+      );
+      const fallbackRead = await fetchPublicVisitCount();
+      return fallbackRead !== null
+        ? { ok: true, totalVisits: fallbackRead }
+        : { ok: false, totalVisits: null };
     }
 
     const totalVisits = extractVisitCount(data);
     if (totalVisits === null) {
-      return { ok: false, totalVisits: null };
+      console.warn('[VisitorCounter] Unexpected increment_site_visits response payload.');
+      const fallbackRead = await fetchPublicVisitCount();
+      return fallbackRead !== null
+        ? { ok: true, totalVisits: fallbackRead }
+        : { ok: false, totalVisits: null };
     }
 
     return { ok: true, totalVisits };
-  } catch {
+  } catch (err) {
+    console.warn(
+      '[VisitorCounter] Unexpected error recording visit:',
+      err instanceof Error ? err.message : 'Unknown error',
+    );
     return { ok: false, totalVisits: null };
   }
 }
@@ -86,13 +109,13 @@ export function recordPublicPortfolioVisit(): Promise<VisitRecordResult> {
  * Reads the latest visit count without incrementing it (used for periodic UI refresh).
  */
 export async function fetchPublicVisitCount(): Promise<number | null> {
-  const supabase = getSupabaseClient();
-
-  if (!supabase) {
-    return readLocalVisits();
-  }
-
   try {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      return readLocalVisits();
+    }
+
     const { data, error } = await supabase
       .from('site_stats')
       .select('total_visits')
@@ -100,6 +123,11 @@ export async function fetchPublicVisitCount(): Promise<number | null> {
       .maybeSingle();
 
     if (error) {
+      console.warn(
+        '[VisitorCounter] Failed to read site_stats:',
+        error.code ?? 'QUERY_ERROR',
+        error.message,
+      );
       return null;
     }
 

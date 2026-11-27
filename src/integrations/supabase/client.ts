@@ -5,8 +5,8 @@ import { getSupabaseEnv } from './env';
 let cachedClient: SupabaseClient<Database> | null = null;
 
 /**
- * Returns a typed Supabase client when environment variables are configured,
- * or null during Phase 1–3 local-seed operation.
+ * Returns a typed Supabase client when environment variables are valid,
+ * or null during local preview operation.
  */
 export function getSupabaseClient(): SupabaseClient<Database> | null {
   if (cachedClient) {
@@ -18,12 +18,15 @@ export function getSupabaseClient(): SupabaseClient<Database> | null {
     return null;
   }
 
-  cachedClient = createClient<Database>(env.url, env.anonKey, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  });
-
-  return cachedClient;
+  try {
+    cachedClient = createClient<Database>(env.url, env.anonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    });
+    return cachedClient;
+  } catch {
+    return null;
+  }
 }
